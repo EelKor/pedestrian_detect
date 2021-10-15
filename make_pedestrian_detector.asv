@@ -32,22 +32,9 @@ bldsTrain = boxLabelDatastore(trainingDataTbl(:,'vehicle'));
 % 이미지 데이터, 라벨 데이터 합치기
 trainingData = combine(imdsTrain, bldsTrain);
 
+% trainingData 에 있는 데이터 1개 읽어오고 figure 창에 라벨과 함께 띄우기
+data = read(trainingData);
 
-
-inputSize = [224 224 3];
-numClasses = width(pedestrianDataset)-1;
-trainingDataForEstimation = transform(trainingData,@(data)preprocessData(data,inputSize));
-numAnchors = 7;
-[anchorBoxes, meanIoU] = estimateAnchorBoxes(trainingDataForEstimation, numAnchors);
-
-
-featureExtractionNetwork = resnet50;
-featureLayer = 'activation_40_relu';
-lgraph = yolov2Layers(inputSize, numClasses, anchorBoxes,featureExtractionNetwork,featureLayer);
-
-
-preprocessedTrainingData = transform(trainingData, @(data)preprocessData(data,inputSize));
-data = read(preprocessedTrainingData)
 I = data{1};
 bbox = data{2};
 annotatedImage = insertShape(I, 'Rectangle',bbox);
@@ -55,13 +42,9 @@ annotatedImage = imresize(annotatedImage, 2);
 figure
 imshow(annotatedImage);
 
-options = trainingOptions('sgdm',...
-          'InitialLearnRate',0.001,...
-          'Verbose',true,...
-          'MiniBatchSize',16,...
-          'MaxEpochs',20,...
-          'Shuffle','never',...
-          'VerboseFrequency',30,...
-          'CheckpointPath',tempdir);
- disp("Training Start")     
-[detector, info] = trainYOLOv2ObjectDetector(preprocessedTrainingData, lgraph, options);
+inputSize = [224 224 3];
+numClasses = width(pedestrianDataset)-1;
+trainingDataForEstimation = transform(trainingData.,@(data)preprocessData(data,inputSize))
+numAnchors = 7;
+[anchorBoxes, meanIoU] = estimateAnchorBoxes(trainingDataForEstimation, numAnchors)
+
