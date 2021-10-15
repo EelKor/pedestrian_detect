@@ -14,7 +14,13 @@
 clc
 clear
 
-mycell = cell(1,2);
+% 빈 테이블 생성
+varNames = {'imageFilename','vehicle'};
+sz = [2 2];
+varTypes = {'string','double'};
+new = table();
+
+
 % 파일 이름 입력
 filename = 'annotations.txt';
 tables = readtable(filename,'TextType','string');    % 해당 파일을 table 형식으로 읽어옴
@@ -29,15 +35,10 @@ for idx = 1:height(tables)
         tmp = [tmp; str2num(tables{idx,boundBoxcoord})];     % 임시행렬에 Boundbox 값 추가
     end
   end
-  tmp(1,:) = [];        % 24행 에서 생긴 맨 앞의 빈 행 삭제
-  celltmp = {tables{idx,1},tmp};
-  mycell = [mycell; celltmp];
+  tmp(1,:) = [];
+  a = tables{idx,1}
+  whos a
+  new.imageFilename{idx} = tables{idx,1};
 end
 
-mycell(1,:) = [];       % 17행 에서 생긴 맨 앞의 빈 셀 삭제
-newTable = cell2table(mycell, 'VariableNames',{'imageFilename','vehicle'})      % 셀 배열을 테이블 형식으로 변환
-
-% 생성된 데이터 저장
-save('pedestrianDataset.mat','newTable')
-
-
+disp(new)
